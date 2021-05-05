@@ -1,0 +1,15 @@
+[
+    {
+        "model": "raterprojectapi.game",
+        "pk": 1,
+        "fields": {
+            "title": "Settlers of Catan",
+            "description": "a multiplayer board game designed by Klaus Teuber",
+            "release_year": 1995,
+            "number_players": 6,
+            "time_to_play": 120,
+            "age": 10,
+            "creator": 1
+        }
+    }
+]
