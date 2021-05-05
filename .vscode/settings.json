@@ -6,5 +6,7 @@
             "name": "gamerater-server",
             "database": "db.sqlite3"
         }
-    ]
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.pythonPath": "/home/sllittrell/.local/share/virtualenvs/gamerater-FcMwEuWq/bin/python"
 }
