@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from raterprojectapi.models import Game, GameCategory, Player
+from raterprojectapi.models import Game, Player, Category
 
 
 class GameViewSet(ViewSet):
@@ -23,13 +23,12 @@ class GameViewSet(ViewSet):
         game.time_to_play = request.data['timeToPlay']
         game.age = request.data['age']
         game.creator = creator
-    
-        category = GameCategory.objects.get(pk=request.data["categoryId"])
-        game.game_category = category
 
     
         try:
             game.save()
+            categories = Category.objects.in_bulk(request.data['categories'])
+            game = categories_set.set(categories)
             serializer = GameSerializer(game, context={'request': request})
             return Response(serializer.data)
 
@@ -59,7 +58,7 @@ class GameViewSet(ViewSet):
         game.age = request.data['age']
         game.creator = creator
 
-        category = GameCategory.objects.get(pk=request.data["categoryId"])
+        category = GameCategory.objects.get(pk=request.data["categories"])
         game.game_category = category
         game.save()
 
