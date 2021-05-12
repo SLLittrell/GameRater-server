@@ -28,7 +28,7 @@ class GameViewSet(ViewSet):
         try:
             game.save()
             categories = Category.objects.in_bulk(request.data['categories'])
-            game = categories_set.set(categories)
+            game.categories.set(categories)
             serializer = GameSerializer(game, context={'request': request})
             return Response(serializer.data)
 
@@ -50,6 +50,7 @@ class GameViewSet(ViewSet):
   
         creator = Player.objects.get(user=request.auth.user)
 
+        game = Game()
         game.title = request.data['title']
         game.description = request.data['description']
         game.release_year = request.data['releaseYear']
@@ -57,9 +58,8 @@ class GameViewSet(ViewSet):
         game.time_to_play = request.data['timeToPlay']
         game.age = request.data['age']
         game.creator = creator
-
-        category = GameCategory.objects.get(pk=request.data["categories"])
-        game.game_category = category
+        categories = Category.objects.in_bulk(request.data['categories'])
+        game.categories.set(categories)
         game.save()
 
 
@@ -95,5 +95,5 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator')
+        fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator', 'categories')
         depth = 1

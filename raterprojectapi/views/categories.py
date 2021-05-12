@@ -15,7 +15,7 @@ class CategoryViewSet(ViewSet):
         """
         try:
             game_category = Category.objects.get(pk=pk)
-            serializer = CategorySerializer(game_category, context={'request': request})
+            serializer = GameCategorySerializer(game_category, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
