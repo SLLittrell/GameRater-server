@@ -1,3 +1,4 @@
+from raterprojectapi.models.reviews import Review
 from django.core.exceptions import ValidationError
 from rest_framework import status
 from django.http import HttpResponseServerError
@@ -43,6 +44,7 @@ class GameViewSet(ViewSet):
             game = Game.objects.get(pk=pk)
             serializer = GameSerializer(game, context={'request': request})
             return Response(serializer.data)
+            
         except Exception as ex:
             return HttpResponseServerError(ex)
 
@@ -82,10 +84,12 @@ class GameViewSet(ViewSet):
     def list(self, request):
      
         games = Game.objects.all()
+        reviews = Review.objects.all()
 
-        game_type = self.request.query_params.get('type', None)
-        if game_type is not None:
-            games = games.filter(gametype__id=game_type)
+
+        reviews = self.request.query_params.get('reviews', None)
+        if reviews is not None:
+            games = games.filter(game__id=reviews)
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})
@@ -95,5 +99,12 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator', 'categories')
+        fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator', 'categories', 'reviews')
+        depth = 1
+
+class ReviewSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Review
+        fields = ('id', 'title', 'review', 'rating', 'game', 'reviewer' )
         depth = 1

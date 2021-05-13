@@ -10,3 +10,4 @@ class Game(models.Model):
     age = models.IntegerField()
     creator = models.ForeignKey("Player", on_delete=models.CASCADE)
     categories = models.ManyToManyField("Category", related_name="games")
+    reviews = models.ManyToManyField("Review", related_name="reviews")
