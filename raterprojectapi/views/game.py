@@ -49,10 +49,12 @@ class GameViewSet(ViewSet):
             return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
-  
+        game = Game()
         creator = Player.objects.get(user=request.auth.user)
 
-        game = Game()
+        if creator is not game.creator:
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
+       
         game.title = request.data['title']
         game.description = request.data['description']
         game.release_year = request.data['releaseYear']
