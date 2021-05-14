@@ -6,7 +6,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from raterprojectapi.models import Game, Player, Category
+from raterprojectapi.models import Game, Player, Category, Review
 
 
 class GameViewSet(ViewSet):
@@ -84,12 +84,6 @@ class GameViewSet(ViewSet):
     def list(self, request):
      
         games = Game.objects.all()
-        reviews = Review.objects.all()
-
-
-        reviews = self.request.query_params.get('reviews', None)
-        if reviews is not None:
-            games = games.filter(game__id=reviews)
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})
@@ -99,5 +93,5 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator', 'categories', 'reviews')
+        fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator', 'categories', 'average_rating')
         depth = 1

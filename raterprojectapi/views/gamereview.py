@@ -17,7 +17,6 @@ class ReviewViewSet(ViewSet):
         review = Review()
         review.title = request.data['title']
         review.review = request.data['review']
-        review.rating = request.data['rating']
         review.reviewer = reviewer
 
         game = Game.objects.get(pk=request.data['gameId'])
@@ -70,5 +69,5 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'title', 'review', 'rating', 'game', 'reviewer' )
+        fields = ('id', 'title', 'review', 'game', 'reviewer' )
         depth = 1
