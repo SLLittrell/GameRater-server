@@ -1,4 +1,4 @@
-from raterprojectapi.models.reviews import Review
+
 from django.core.exceptions import ValidationError
 from rest_framework import status
 from django.http import HttpResponseServerError
@@ -100,11 +100,4 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ('id', 'title', 'description', 'release_year', 'number_players', 'time_to_play', 'age', 'creator', 'categories', 'reviews')
-        depth = 1
-
-class ReviewSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Review
-        fields = ('id', 'title', 'review', 'rating', 'game', 'reviewer' )
         depth = 1
