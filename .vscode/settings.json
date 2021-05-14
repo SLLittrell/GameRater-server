@@ -5,6 +5,12 @@
             "driver": "SQLite",
             "name": "gamerater-server",
             "database": "db.sqlite3"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "rater-server",
+            "database": "db.sqlite3"
         }
     ],
     "python.linting.pylintEnabled": true,
