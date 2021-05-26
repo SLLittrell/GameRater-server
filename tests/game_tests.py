@@ -67,3 +67,60 @@ class GameTests(APITestCase):
         self.assertEqual(json_response["time_to_play"], 30)
         self.assertEqual(json_response["age"], 8)
     
+    def test_get_game(self):
+        """
+        Ensure we can get an existing game.
+        """
+        game = Game()
+        game.title = "Monopoly"
+        game.description = "I got all the Money"
+        game.release_year = 1935
+        game.number_players = 8
+        game.time_to_play = 180
+        game.age = 8
+        game.creator_id =1
+
+        game.save()
+
+        game.categories.set([1])
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+        response = self.client.get(f"/games/{game.id}")
+
+        json_response = json.loads(response.content)
+      
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(json_response["title"], "Monopoly")
+        self.assertEqual(json_response["description"], "I got all the Money")
+        self.assertEqual(json_response["release_year"], 1935)
+        self.assertEqual(json_response["number_players"], 8)
+        self.assertEqual(json_response["time_to_play"], 180)
+        self.assertEqual(json_response["age"], 8)
+
+    def test_get_all_games(self):
+        """
+        Ensure we can get an existing game.
+        """
+        game = Game()
+        game.title = "Scrabble"
+        game.description = "Double letter Scooore!!!"
+        game.release_year = 1938
+        game.number_players = 4
+        game.time_to_play = 50
+        game.age = 5
+        game.creator_id =1
+
+        game.save()
+
+        game.categories.set([1])
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+        response = self.client.get(f"/games")
+
+        json_response = json.loads(response.content)
+      
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(json_response), 1)
+  
