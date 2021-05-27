@@ -43,8 +43,11 @@ class GameViewSet(ViewSet):
         try:
             game = Game.objects.get(pk=pk)
             serializer = GameSerializer(game, context={'request': request})
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
             
+        except Game.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        
         except Exception as ex:
             return HttpResponseServerError(ex)
 
@@ -52,8 +55,8 @@ class GameViewSet(ViewSet):
         game = Game()
         creator = Player.objects.get(user=request.auth.user)
 
-        if creator is not game.creator:
-            return Response({}, status=status.HTTP_403_FORBIDDEN)
+        # if creator is not game.creator:
+        #     return Response({}, status=status.HTTP_403_FORBIDDEN)
        
         game.title = request.data['title']
         game.description = request.data['description']
@@ -62,12 +65,12 @@ class GameViewSet(ViewSet):
         game.time_to_play = request.data['timeToPlay']
         game.age = request.data['age']
         game.creator = creator
-        categories = Category.objects.in_bulk(request.data['categories'])
-        game.categories.set(categories)
+        
+
         game.save()
+        game.categories.set(request.data['categories'])
 
-
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
+        return Response({}, status= status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk=None):
       
