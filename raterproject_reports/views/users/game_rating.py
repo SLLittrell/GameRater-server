@@ -1,10 +1,10 @@
 """Module for generating games by user report"""
 import sqlite3
 from django.shortcuts import render
-from raterprojectapi.models import Game
+from raterprojectapi.models import Rating, Game
 from raterproject_reports.views import Connection
 
-def userevents_list(request):
+def game_rating_list(request):
     """Function to build an HTML report of games by user"""
     if request.method == 'GET':
         # Connect to project database
@@ -14,55 +14,35 @@ def userevents_list(request):
 
             # Query for all games, with related user info.
             db_cursor.execute("""
-                SELECT
-                    e.id,
-                    e.date,
-                    e.description,
-                    e.time,
-                    e.game_id,
-                    g.title,
-                    u.id user_id,
-                    u.first_name || ' ' || u.last_name AS full_name
-                FROM
-                    levelupapi_event e
-                JOIN
-                    levelupapi_game g ON g.id = e.game_id
-                JOIN
-                    levelupapi_gamer gr ON gr.id = e.organizer_id 
-                JOIN
-                    auth_user u ON gr.user_id = u.id
+                SELECT 
+                    avg(r.rating) average,
+                    g.title, 
+                    g.id 
+                From raterprojectapi_game g
+                JOIN raterprojectapi_rating r ON r.game_id = g.id
+                GROUP BY g.title
+                ORDER BY average DESC 
+                LIMIT 5
             """)
 
             dataset = db_cursor.fetchall()
 
-            events_by_user = {}
+            top_5_games = {}
 
             for row in dataset:
 
-                event = Event()
-                event.time = row["time"]
-                event.date = row["date"]
-                event.description = row["description"]
-                event.game_id = row["game_id"]
-                event.game_name = event.game.title
+                game =Game()
+                game.id = row['id']
+                game.title = row['title']
+                game.rating = row['average']
+                
+                top_5_games[game.id]= game
 
-                uid = row["user_id"]
+        list_of_top_5_games = list(top_5_games.values())
 
-                if uid in events_by_user:
-
-                   events_by_user[uid]['events'].append(event)
-
-                else:
-                   events_by_user[uid] = {}
-                   events_by_user[uid]["id"] = uid
-                   events_by_user[uid]["full_name"] = row["full_name"]
-                   events_by_user[uid]["events"] = [event]
-
-        list_of_users_with_events = events_by_user.values()
-
-        template = 'users/list_with_events.html'
+        template = 'games/game_report.html'
         context = {
-            'userevent_list': list_of_users_with_events
+            'top_5_games_list': list_of_top_5_games
         }
 
         return render(request, template, context)
